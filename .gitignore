@@ -140,3 +140,4 @@ cython_debug/
 
 # Secrets File
 app_secrets.py
+.idea
