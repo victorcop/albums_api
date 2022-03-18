@@ -1,18 +1,14 @@
 from flask import jsonify, Blueprint, request
 
-from app import db, cache
 from app.errors import not_found, bad_request, no_content
 from app.logger import log_error
-from app.models.album_model import Album
 
 from http import HTTPStatus
 
+from app.repository.album_repository import AlbumRepository
+
 album = Blueprint('album', __name__)
-
-
-@cache.cached(timeout=60, key_prefix='list_of_albums')
-def get_albums():
-    return Album.query.all()
+album_repository = AlbumRepository()
 
 
 @album.route('', methods=['GET'])
@@ -21,23 +17,23 @@ def get_all():
     Gets all the albums
     :return: A list with all the albums
     """
-    albums_db = get_albums()
-    if not albums_db:
+    albums = album_repository.list()
+    if not albums:
         return no_content()
-    return jsonify([s.serialize() for s in albums_db])
+    return jsonify(albums)
 
 
 @album.route('/<album_id>', methods=['GET'])
 def get(album_id):
     """
-    Gets an album by id
+    Gets an album by uuid
     :param album_id: Album ID
     :return: an album
     """
-    album_db = Album.query.get(album_id)
+    album_db = album_repository.get(album_id)
     if not album_db:
         return not_found()
-    return jsonify(album_db.serialize())
+    return jsonify(album_db)
 
 
 @album.route('', methods=['POST'])
@@ -48,35 +44,27 @@ def post():
     """
     try:
         data = request.json
-        name = data['name']
-        description = data['description']
-        new_album = Album(name, description)
-        db.session.add(new_album)
-        db.session.commit()
-        response_dict = dict(id=new_album.id, name=name, description=description)
-        return response_dict, HTTPStatus.CREATED
+        response_dict = album_repository.add(data['name'], data['description'])
+        id_album = response_dict['uuid']
+        return response_dict, HTTPStatus.CREATED, {'location': f'/album/{id_album}'}
     except KeyError as e:
         log_error(e)
         return bad_request()
 
 
-@album.route('', methods=['PUT'])
-def put():
+@album.route('/<album_id>', methods=['PUT'])
+def put(album_id):
     """
     Updates an album
     :return: Updated album
     """
     try:
         data = request.json
-        name = data['name']
-        album_db = Album.query.filter_by(name=name).first()
-        if not album_db:
+        response_dict = album_repository.update(album_id, data['name'], data['description'])
+        if not response_dict:
             return no_content()
-        album_db.description = data['description']
-        db.session.add(album_db)
-        db.session.commit()
-        response_dict = dict(id=album_db.id, name=album_db.name, description=album_db.description)
-        return response_dict
+        id_album = response_dict['uuid']
+        return response_dict, HTTPStatus.OK, {'location': f'/album/{id_album}'}
     except KeyError as e:
         log_error(e)
         return bad_request()
@@ -89,10 +77,9 @@ def delete(album_id):
     :param album_id: Album ID
     :return: 200 success=True
     """
-    album_db = Album.query.get(album_id)
+    album_db = album_repository.get(album_id)
     if not album_db:
         return not_found()
-    db.session.delete(album_db)
-    db.session.commit()
+    album_repository.delete(album_id)
     response_dict = dict(success=True)
     return response_dict
