@@ -1,6 +1,6 @@
 from flask import jsonify, Blueprint, request
 
-from app.errors import not_found, bad_request, no_content
+from app.errors import not_found, bad_request, no_content, internal_server
 from app.logger import log_error
 
 from http import HTTPStatus
@@ -17,10 +17,14 @@ def get_all():
     Gets all the albums
     :return: A list with all the albums
     """
-    albums = album_repository.list()
-    if not albums:
-        return no_content()
-    return jsonify(albums)
+    try:
+        albums = album_repository.list()
+        if not albums:
+            return no_content()
+        return jsonify(albums)
+    except Exception as e:
+        log_error(e)
+        return internal_server(e)
 
 
 @album.route('/<album_id>', methods=['GET'])
@@ -30,10 +34,14 @@ def get(album_id):
     :param album_id: Album ID
     :return: an album
     """
-    album_db = album_repository.get(album_id)
-    if not album_db:
-        return not_found()
-    return jsonify(album_db)
+    try:
+        album_db = album_repository.get(album_id)
+        if not album_db:
+            return not_found()
+        return jsonify(album_db)
+    except Exception as e:
+        log_error(e)
+        return internal_server(e)
 
 
 @album.route('', methods=['POST'])
@@ -46,10 +54,13 @@ def post():
         data = request.json
         response_dict = album_repository.add(data['name'], data['description'])
         id_album = response_dict['uuid']
-        return response_dict, HTTPStatus.CREATED, {'location': f'/album/{id_album}'}
+        return response_dict, HTTPStatus.CREATED, {'location': f'api/album/{id_album}'}
     except KeyError as e:
         log_error(e)
         return bad_request()
+    except Exception as e:
+        log_error(e)
+        return internal_server(e)
 
 
 @album.route('/<album_id>', methods=['PUT'])
@@ -64,10 +75,13 @@ def put(album_id):
         if not response_dict:
             return no_content()
         id_album = response_dict['uuid']
-        return response_dict, HTTPStatus.OK, {'location': f'/album/{id_album}'}
+        return response_dict, HTTPStatus.OK, {'location': f'api/album/{id_album}'}
     except KeyError as e:
         log_error(e)
         return bad_request()
+    except Exception as e:
+        log_error(e)
+        return internal_server(e)
 
 
 @album.route('/<album_id>', methods=['DELETE'])
@@ -77,9 +91,14 @@ def delete(album_id):
     :param album_id: Album ID
     :return: 200 success=True
     """
-    album_db = album_repository.get(album_id)
-    if not album_db:
-        return not_found()
-    album_repository.delete(album_id)
-    response_dict = dict(success=True)
-    return response_dict
+    try:
+        album_db = album_repository.get(album_id)
+        if not album_db:
+            return not_found()
+        album_repository.delete(album_id)
+        response_dict = dict(success=True)
+        return response_dict
+    except Exception as e:
+        log_error(e)
+        return internal_server(e)
+

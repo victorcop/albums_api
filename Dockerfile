@@ -4,11 +4,13 @@ FROM python
 
 # Maintainer name to let people know who made this image.
 
-MAINTAINER Kartik <victorcop90@gmail.com>
+MAINTAINER Victor Velasquez <victorcop90@gmail.com>
 
-COPY requirements.txt requirements.txt
+WORKDIR /code
+
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY .. .
 
-CMD python setup.py
+CMD ["python", "setup.py"]

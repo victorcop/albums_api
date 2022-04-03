@@ -1,6 +1,6 @@
 from sqlalchemy import select, update, delete
 
-from app.logger import log_error
+from app.logger import log_error, log
 from app.models.album_model import Album
 from app import db, cache
 import uuid
@@ -23,7 +23,7 @@ class AlbumRepository:
             if results:
                 result = results[0]
                 return dict(uuid=result.uuid, name=result.name, description=result.description)
-        except KeyError as e:
+        except Exception as e:
             log_error(e)
 
     @cache.cached(timeout=60, key_prefix='list_of_albums')
@@ -33,7 +33,7 @@ class AlbumRepository:
             results = self._session.execute(statement).all()
             if results:
                 return [dict(uuid=s[0].uuid, name=s[0].name, description=s[0].description) for s in results]
-        except KeyError as e:
+        except Exception as e:
             log_error(e)
 
     def update(self, uuid: str, name: str, description: str) -> dict:
@@ -46,7 +46,7 @@ class AlbumRepository:
             album_db = self._session.query(Album).filter(Album.uuid == uuid).first()
             if album_db:
                 return dict(uuid=album_db.uuid, name=album_db.name, description=album_db.description)
-        except KeyError as e:
+        except Exception as e:
             log_error(e)
 
     def delete(self, uuid: str) -> None:
