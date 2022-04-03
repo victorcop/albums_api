@@ -13,6 +13,8 @@ Here's a brief intro about what a developer must do in order to start developing
 the project further:
 
 ```shell
+mkdir albumservice
+cd albumservice/
 git clone https://github.com/VictorVelasquez90/albums_api.git
 cd albums_api/
 ```
