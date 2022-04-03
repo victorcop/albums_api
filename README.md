@@ -1,4 +1,4 @@
-# Album API &middot; [![Build Status](https://secure.travis-ci.org/TwP/inifile.png)](http://travis-ci.org/TwP/inifile) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
+# Album API &middot; [![Build Status](https://secure.travis-ci.org/TwP/inifile.png)](http://travis-ci.org/TwP/inifile) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE) [![Docker](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg?maxAge=2592000)]()
 =======
 
 Python Flask application to store musical albums.
@@ -34,6 +34,7 @@ A typical INI file might look like this:
     redis_port = 6379
     redis_db = 0
 
+### Add necessary environment variables
 
 ```sh
 export DEBUG=True
@@ -43,7 +44,18 @@ export DATABASE_PASS=change_to_refect_password
 ```
 see: https://google.github.io/styleguide/shell.xml#Constants_and_Environment_Variable_Names
 
+### Execute using docker compose:
+
 ```sh
 docker compose build
 docker compose up -d
 ```
+
+### Otherwise, for the standalone web service:
+
+```shell
+pip install -r requirements.txt
+python setup.py
+```
+
+Visit [http://localhost/api/album](http://localhost/api/album)
