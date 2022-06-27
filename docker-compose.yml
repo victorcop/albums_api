@@ -1,0 +1,60 @@
+# 1. Set DATABASE_PASS environment variable by running the following command
+
+# export DATABASE_PASS=value
+
+# If you are in windows use one of the following
+
+# For Windows Powershell use `$env:DATABASE_PASS = "value"`.
+# $env:DATABASE_PASS="value"
+
+# 2. Run docker compose build
+
+# 3. Run docker compose up -d
+
+version: "3.x"
+
+services:
+  albumservice:
+    build:
+      .
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ".:/code"
+    depends_on:
+      - db
+      - cache
+    environment:
+      - DEBUG=False
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - FLASK_ENV=${FLASK_ENV}
+  web:
+    build:
+      nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+    depends_on:
+      - albumservice
+  db:
+    image: mysql
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASS}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-volume:/var/lib/mysql
+    networks:
+      - backend
+  cache:
+    image: redis:latest
+    networks:
+      - frontend
+networks:
+  frontend:
+  backend:
+volumes:
+  db-volume:

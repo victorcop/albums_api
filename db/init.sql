@@ -1,0 +1,20 @@
+CREATE DATABASE IF NOT EXISTS albums_api;
+
+USE albums_api;
+
+CREATE TABLE IF NOT EXISTS albums (
+    id int NOT NULL AUTO_INCREMENT,
+    uuid VARCHAR(36) UNIQUE,
+    `name` VARCHAR(64),
+    description VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS users (
+    id int NOT NULL AUTO_INCREMENT,
+    uuid VARCHAR(36) UNIQUE,
+    username VARCHAR(64) NOT NULL,
+    email VARCHAR(64) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+)ENGINE=INNODB;

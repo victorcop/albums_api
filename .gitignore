@@ -142,3 +142,4 @@ cython_debug/
 .idea
 migrations
 app.ini
+.DS_Store
