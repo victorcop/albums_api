@@ -11,12 +11,12 @@
 
 # 3. Run docker compose up -d
 
-version: "3.x"
+version: "3.7"
 
 services:
   albumservice:
     build:
-      .
+      dockerfile: Dockerfile
     networks:
       - frontend
       - backend
@@ -31,7 +31,7 @@ services:
       - FLASK_ENV=${FLASK_ENV}
   web:
     build:
-      nginx
+      dockerfile: nginx/Dockerfile
     ports:
       - "80:80"
     networks:
