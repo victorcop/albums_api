@@ -13,7 +13,7 @@ class UserRepository:
         new_user = User(username, email, password)
         db.session.add(new_user)
         db.session.commit()
-        return dict(uuid=new_user.uuid, username=new_user.username, password=new_user.email)
+        return dict(uuid=new_user.uuid, username=new_user.username, email=new_user.email)
 
     def get(self, username) -> User:
         try:
