@@ -1,4 +1,4 @@
-# Album API &middot; [![Build Status](https://secure.travis-ci.org/TwP/inifile.png)](http://travis-ci.org/TwP/inifile) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE) [![Docker](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg?maxAge=2592000)]()
+# Album API &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE) [![Docker](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg?maxAge=2592000)]()
 =======
 
 Python Flask application to store musical albums.
